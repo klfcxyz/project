@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Naruto Runner</title>
+    <title>Ninja Runner</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
@@ -18,23 +18,31 @@
             color: white;
         }
 
-        /* --- GİRİŞ EKRANLARI --- */
-        #soon-screen, #welcome-screen {
+        /* --- GİRİŞ EKRANI --- */
+        #intro-screen {
             position: absolute;
             text-align: center;
-            z-index: 10;
+            z-index: 50;
+            background: rgba(0,0,0,0.8);
+            padding: 40px;
+            border-radius: 10px;
+            border: 2px solid #ffcc00;
         }
         
-        #soon-screen h1 {
+        #intro-screen h1 {
             font-size: 4rem;
             color: #ffcc00;
             text-shadow: 4px 4px 0 #000;
+            margin-bottom: 10px;
         }
-        #welcome-screen h1 {
-            font-size: 4rem;
-            color: #00ffcc;
-            text-shadow: 4px 4px 0 #000;
+
+        #intro-screen p {
+            font-size: 1.2rem;
+            color: #ccc;
+            animation: blink 1s infinite;
         }
+
+        @keyframes blink { 50% { opacity: 0.5; } }
 
         /* --- OYUN ALANI --- */
         #game-container {
@@ -49,7 +57,7 @@
             overflow: hidden;
         }
 
-        /* Katmanlı Dağlar */
+        /* Dağlar */
         .mountains {
             position: absolute;
             bottom: 40px;
@@ -81,46 +89,39 @@
             z-index: 3;
         }
 
-        /* --- GERÇEK NARUTO RESMİ --- */
-        #naruto {
+        /* --- SVG NINJA KARAKTERİ --- */
+        #ninja {
             position: absolute;
             bottom: 40px;
             left: 50px;
-            /* O yaptığımız kibrit kutusunu siliyoruz, yerine resmi koyuyoruz */
-            width: 50px; 
+            width: 50px;
             height: 60px;
-            background-image: url('https://i.imgur.com/8Y6y4Qe.png'); /* Pixel art Naruto */
-            background-size: contain;
-            background-repeat: no-repeat;
-            background-position: center;
             z-index: 10;
             transition: bottom 0.1s;
         }
 
-        /* Zıplama Sınıfı */
         .jump {
             animation: jumpAnim 0.6s ease-in-out;
         }
 
         @keyframes jumpAnim {
             0% { bottom: 40px; }
-            50% { bottom: 150px; }
+            50% { bottom: 140px; }
             100% { bottom: 40px; }
         }
 
-        /* --- ENGELLER (Shuriken) --- */
+        /* --- ENGELLER --- */
         .obstacle {
             position: absolute;
             width: 30px;
             height: 30px;
-            background: #444;
+            background: #333;
             border: 3px solid #000;
-            border-radius: 50%; /* Yuvarlak yaptık ki shuriken gibi dursun */
+            border-radius: 50%; /* Shuriken */
             z-index: 5;
             animation: moveObstacle 2s linear infinite;
         }
         
-        /* Shurikenin içindeki delik */
         .obstacle::after {
             content: '';
             position: absolute;
@@ -151,6 +152,7 @@
             z-index: 15;
         }
 
+        /* Oyun Bitti */
         #game-over {
             display: none;
             position: absolute;
@@ -177,13 +179,16 @@
             margin-top: 15px;
             box-shadow: 2px 2px 0 #000;
         }
+
     </style>
 </head>
 <body>
 
-    <!-- GİRİŞ EKRANLARI -->
-    <div id="soon-screen"><h1>SOON...</h1></div>
-    <div id="welcome-screen" style="display:none;"><h1>WELCOME</h1></div>
+    <!-- GİRİŞ EKRANI -->
+    <div id="intro-screen">
+        <h1>WELCOME</h1>
+        <p>Başlamak için tıkla veya Boşluk'a bas</p>
+    </div>
 
     <!-- OYUN EKRANI -->
     <div id="game-container">
@@ -192,7 +197,26 @@
         <div id="ground"></div>
         
         <div id="score">0</div>
-        <div id="naruto"></div>
+        
+        <!-- SVG İLE ÇİZİLMİŞ NİNJA -->
+        <div id="ninja">
+            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                <!-- Kafa -->
+                <circle cx="50" cy="40" r="20" fill="#ffdbac" stroke="#000" stroke-width="4"/>
+                <!-- Saç/Bandana -->
+                <path d="M30 30 Q50 10 70 30 L75 35 L25 35 Z" fill="#ff8c00" stroke="#000" stroke-width="3"/>
+                <!-- Göz Bandı -->
+                <rect x="30" y="35" width="40" height="10" fill="#333" />
+                <!-- Gözler (Sadece biri açık) -->
+                <circle cx="40" cy="42" r="3" fill="#fff" />
+                <circle cx="60" cy="42" r="3" fill="#000" />
+                <!-- Vücut (Turuncu) -->
+                <rect x="30" y="60" width="40" height="30" fill="#ff8c00" stroke="#000" stroke-width="4" rx="5"/>
+                <!-- Bacaklar -->
+                <rect x="35" y="85" width="10" height="15" fill="#000" />
+                <rect x="55" y="85" width="10" height="15" fill="#000" />
+            </svg>
+        </div>
         
         <div id="game-over">
             <h2>Oyun Bitti!</h2>
@@ -202,10 +226,9 @@
     </div>
 
     <script>
-        const soonScreen = document.getElementById('soon-screen');
-        const welcomeScreen = document.getElementById('welcome-screen');
+        const introScreen = document.getElementById('intro-screen');
         const gameContainer = document.getElementById('game-container');
-        const naruto = document.getElementById('naruto');
+        const ninja = document.getElementById('ninja');
         const gameOverScreen = document.getElementById('game-over');
         const scoreDisplay = document.getElementById('score');
         const finalScoreDisplay = document.getElementById('final-score');
@@ -217,31 +240,50 @@
         let obstacleInterval;
         let currentObstacle = null;
         let obstacleSpeed = 2000;
+        let gameStarted = false;
 
-        // Giriş Animasyonları
-        setTimeout(() => {
-            soonScreen.style.display = 'none';
-            welcomeScreen.style.display = 'block';
-        }, 2000);
-
-        setTimeout(() => {
-            welcomeScreen.style.display = 'none';
+        // Başlatma Dinleyicileri
+        function initGame() {
+            if (gameStarted) return;
+            gameStarted = true;
+            introScreen.style.display = 'none';
             gameContainer.style.display = 'block';
             startGame();
-        }, 4000);
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'Space' || e.code === 'ArrowUp') {
+                e.preventDefault();
+                if (!gameStarted) initGame();
+                else jump();
+            }
+        });
+
+        gameContainer.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            if (!gameStarted) initGame();
+            else jump();
+        });
+        
+        gameContainer.addEventListener('mousedown', (e) => {
+            e.preventDefault();
+            if (!gameStarted) initGame();
+            else jump();
+        });
 
         function jump() {
             if (isJumping || isGameOver) return;
             isJumping = true;
-            naruto.classList.add('jump');
+            ninja.classList.add('jump');
             
             setTimeout(() => {
-                naruto.classList.remove('jump');
+                ninja.classList.remove('jump');
                 isJumping = false;
             }, 600); 
         }
 
         function startGame() {
+            if (!gameStarted) return;
             clearInterval(gameInterval);
             clearInterval(obstacleInterval);
             if (currentObstacle) currentObstacle.remove();
@@ -252,7 +294,6 @@
             gameOverScreen.style.display = 'none';
             obstacleSpeed = 2000;
 
-            // Skor Sayacı
             gameInterval = setInterval(() => {
                 if (!isGameOver) {
                     score += 10;
@@ -260,7 +301,6 @@
                 }
             }, 100);
 
-            // Engel Oluşturucu
             spawnObstacle(); 
             obstacleInterval = setInterval(() => {
                 if (!isGameOver) {
@@ -277,12 +317,11 @@
             const obs = document.createElement('div');
             obs.classList.add('obstacle');
             
-            // Rastgele yükseklik
             const isFlying = Math.random() > 0.5;
             if (isFlying) {
-                obs.style.bottom = '120px'; // Havada
+                obs.style.bottom = '120px'; 
             } else {
-                obs.style.bottom = '40px'; // Yerde
+                obs.style.bottom = '40px'; 
             }
 
             obs.style.animationDuration = `${obstacleSpeed}ms`;
@@ -295,11 +334,10 @@
             }, obstacleSpeed);
         }
 
-        // Çarpışma Kontrolü
         setInterval(() => {
             if (isGameOver || !currentObstacle) return;
 
-            const nRect = naruto.getBoundingClientRect();
+            const nRect = ninja.getBoundingClientRect();
             const oRect = currentObstacle.getBoundingClientRect();
             const cRect = gameContainer.getBoundingClientRect();
 
@@ -308,14 +346,13 @@
             const nY = nRect.top - cRect.top;
             const groundY = cRect.height - 40 - 60;
 
-            // Çarpışma Var mı?
             if (oX < nX + 50 && oX + 30 > nX + 10) {
                 const obsBottom = currentObstacle.style.bottom;
                 
                 if (obsBottom === '40px' && nY > groundY - 20) {
-                    gameOver(); // Yerdeki engele çarptı
+                    gameOver(); 
                 } else if (obsBottom === '120px' && nY < groundY - 30 && nY > groundY - 130) {
-                    gameOver(); // Havadaki engele çarptı
+                    gameOver(); 
                 }
             }
         }, 10);
@@ -328,22 +365,6 @@
             gameOverScreen.style.display = 'block';
             if (currentObstacle) currentObstacle.remove();
         }
-
-        // Kontroller
-        document.addEventListener('keydown', (e) => {
-            if (e.code === 'Space' || e.code === 'ArrowUp') {
-                e.preventDefault();
-                jump();
-            }
-        });
-        gameContainer.addEventListener('touchstart', (e) => {
-            e.preventDefault();
-            jump();
-        });
-        gameContainer.addEventListener('mousedown', (e) => {
-            e.preventDefault();
-            jump();
-        });
     </script>
 </body>
 </html>
