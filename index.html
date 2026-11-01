@@ -3,17 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Naruto Runner: Pixel Edition</title>
+    <title>Naruto Runner</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
         body {
-            background-color: #2c1a1d; /* Koyu arka plan */
+            background: #1a0b2e;
             height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-family: 'Courier New', Courier, monospace; /* Pixel havası için */
+            font-family: 'Courier New', Courier, monospace;
             overflow: hidden;
             color: white;
         }
@@ -29,7 +29,6 @@
             font-size: 4rem;
             color: #ffcc00;
             text-shadow: 4px 4px 0 #000;
-            letter-spacing: 2px;
         }
         #welcome-screen h1 {
             font-size: 4rem;
@@ -45,18 +44,18 @@
             max-width: 800px;
             height: 350px;
             border: 4px solid #000;
-            background: #e5989b; /* Gökyüzü rengi (Görseldeki gibi) */
+            background: #e5989b;
             box-shadow: 0 10px 0 #000;
             overflow: hidden;
         }
 
-        /* Katmanlı Dağlar (Arka Plan) */
+        /* Katmanlı Dağlar */
         .mountains {
             position: absolute;
             bottom: 40px;
             width: 100%;
             height: 150px;
-            background: #b56576; /* Dağ rengi */
+            background: #b56576;
             clip-path: polygon(0 100%, 15% 40%, 30% 100%, 45% 20%, 60% 100%, 75% 50%, 90% 100%, 100% 60%, 100% 100%);
             z-index: 1;
         }
@@ -65,7 +64,7 @@
             bottom: 40px;
             width: 100%;
             height: 100px;
-            background: #6d597a; /* Ön dağ rengi */
+            background: #6d597a;
             clip-path: polygon(0 100%, 20% 30%, 40% 100%, 60% 10%, 80% 100%, 100% 40%, 100% 100%);
             z-index: 2;
         }
@@ -76,52 +75,26 @@
             bottom: 0;
             width: 100%;
             height: 40px;
-            background: #2a9d8f; /* Çim rengi */
+            background: #2a9d8f;
             border-top: 4px solid #000;
-            border-bottom: 8px solid #5c3a21; /* Toprak rengi */
+            border-bottom: 8px solid #5c3a21;
             z-index: 3;
         }
 
-        /* --- NARUTO KARAKTERİ (PIXEL ART CSS) --- */
+        /* --- GERÇEK NARUTO RESMİ --- */
         #naruto {
             position: absolute;
-            bottom: 40px; /* Zeminin üstünde */
+            bottom: 40px;
             left: 50px;
-            width: 40px;
-            height: 50px;
+            /* O yaptığımız kibrit kutusunu siliyoruz, yerine resmi koyuyoruz */
+            width: 50px; 
+            height: 60px;
+            background-image: url('https://i.imgur.com/8Y6y4Qe.png'); /* Pixel art Naruto */
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
             z-index: 10;
-            image-rendering: pixelated; /* Keskin kenarlar için */
             transition: bottom 0.1s;
-        }
-
-        /* Kafa ve Saç */
-        #naruto::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 5px;
-            width: 30px;
-            height: 25px;
-            background: #ffdbac; /* Ten */
-            border: 2px solid #000;
-            border-radius: 4px;
-            box-shadow: 
-                -4px -4px 0 0 #ffcc00, /* Saç */
-                4px -4px 0 0 #ffcc00,
-                0 -6px 0 0 #ffcc00; 
-        }
-
-        /* Gövde (Turuncu Kıyafet) */
-        #naruto::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 40px;
-            height: 25px;
-            background: #ff8c00; 
-            border: 2px solid #000;
-            border-radius: 4px;
         }
 
         /* Zıplama Sınıfı */
@@ -135,28 +108,29 @@
             100% { bottom: 40px; }
         }
 
-        /* --- ENGELLER (Kuş/Shuriken) --- */
+        /* --- ENGELLER (Shuriken) --- */
         .obstacle {
             position: absolute;
             width: 30px;
             height: 30px;
-            background: #555;
+            background: #444;
             border: 3px solid #000;
-            border-radius: 50%;
-            box-shadow: 2px 2px 0 #000;
+            border-radius: 50%; /* Yuvarlak yaptık ki shuriken gibi dursun */
             z-index: 5;
             animation: moveObstacle 2s linear infinite;
         }
         
+        /* Shurikenin içindeki delik */
         .obstacle::after {
             content: '';
             position: absolute;
-            top: 10px;
-            left: 10px;
-            width: 6px;
-            height: 6px;
+            top: 8px;
+            left: 8px;
+            width: 8px;
+            height: 8px;
             background: #e5989b;
             border-radius: 50%;
+            border: 1px solid #000;
         }
 
         @keyframes moveObstacle {
@@ -203,10 +177,6 @@
             margin-top: 15px;
             box-shadow: 2px 2px 0 #000;
         }
-        #game-over button:active {
-            transform: translate(2px, 2px);
-            box-shadow: none;
-        }
     </style>
 </head>
 <body>
@@ -246,7 +216,7 @@
         let gameInterval;
         let obstacleInterval;
         let currentObstacle = null;
-        let obstacleSpeed = 2000; // Engel geçiş süresi
+        let obstacleSpeed = 2000;
 
         // Giriş Animasyonları
         setTimeout(() => {
@@ -295,7 +265,6 @@
             obstacleInterval = setInterval(() => {
                 if (!isGameOver) {
                     spawnObstacle();
-                    // Oyun zorlaştıkça hızlansın
                     if (obstacleSpeed > 800) obstacleSpeed -= 50; 
                 }
             }, 1500);
@@ -303,23 +272,20 @@
 
         function spawnObstacle() {
             if (isGameOver) return;
-            if (currentObstacle) return; // Tek seferde tek engel
+            if (currentObstacle) return; 
 
             const obs = document.createElement('div');
             obs.classList.add('obstacle');
             
-            // FARKLILIK: Rastgele yükseklik (Havada veya yerde)
-            // Eğer Math.random() 0.5'ten büyükse havada uçan shuriken (kuş gibi)
+            // Rastgele yükseklik
             const isFlying = Math.random() > 0.5;
             if (isFlying) {
-                obs.style.bottom = '100px'; // Havada
+                obs.style.bottom = '120px'; // Havada
             } else {
                 obs.style.bottom = '40px'; // Yerde
             }
 
-            // Hızı uygula
             obs.style.animationDuration = `${obstacleSpeed}ms`;
-            
             gameContainer.appendChild(obs);
             currentObstacle = obs;
 
@@ -339,21 +305,17 @@
 
             const nX = nRect.left - cRect.left;
             const oX = oRect.left - cRect.left;
-            
-            // Naruto'nun yüksekliği (Zıplama kontrolü)
             const nY = nRect.top - cRect.top;
-            const groundY = cRect.height - 40 - 50;
+            const groundY = cRect.height - 40 - 60;
 
-            // Çarpışma alanı (Biraz toleranslı)
-            if (oX < nX + 30 && oX + 25 > nX + 5) {
-                // Eğer Naruto yerdeyse VE Engel de yerdeyse VEYA
-                // Naruto havadaysa VE Engel de havadaysa çarpışma olur.
+            // Çarpışma Var mı?
+            if (oX < nX + 50 && oX + 30 > nX + 10) {
                 const obsBottom = currentObstacle.style.bottom;
                 
                 if (obsBottom === '40px' && nY > groundY - 20) {
                     gameOver(); // Yerdeki engele çarptı
-                } else if (obsBottom === '100px' && nY < groundY - 50 && nY > groundY - 150) {
-                    gameOver(); // Havadaki engele zıplarken çarptı
+                } else if (obsBottom === '120px' && nY < groundY - 30 && nY > groundY - 130) {
+                    gameOver(); // Havadaki engele çarptı
                 }
             }
         }, 10);
