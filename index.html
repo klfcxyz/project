@@ -3,119 +3,388 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Soon...</title>
+    <title>Naruto Runner</title>
     <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
         body {
-            margin: 0;
-            padding: 0;
-            background-color: #000;
-            color: #fff;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            overflow: hidden;
+            /* Renkli, hareketli arka plan */
+            background: linear-gradient(135deg, #1a0b2e, #4a154b, #1a0b2e);
+            background-size: 400% 400%;
+            animation: bgMove 10s ease infinite;
+            height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            font-family: 'Arial', sans-serif;
+            overflow: hidden;
+            color: white;
         }
 
-        /* Kırmızı/Siyah hareketli arka plan */
-        .bg-animation {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(45deg, #000000, #1a0000, #330000, #1a0000, #000000);
-            background-size: 400% 400%;
-            animation: gradientBG 10s ease infinite;
-            z-index: 0;
-        }
-
-        @keyframes gradientBG {
+        @keyframes bgMove {
             0% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
             100% { background-position: 0% 50%; }
         }
 
-        .container {
+        /* --- 1. AŞAMA: SOON EKRANI --- */
+        #soon-screen {
+            position: absolute;
             text-align: center;
             z-index: 10;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            position: relative;
+            animation: fadeIn 1s ease-in-out;
         }
-
-        /* Soon yazısı ve kırmızı parlama efekti */
-        .soon-text {
+        
+        #soon-screen h1 {
             font-size: 6rem;
             font-weight: 800;
             letter-spacing: 0.5rem;
-            margin: 0;
-            color: #ffffff;
             text-shadow: 0 0 10px #ff0000, 0 0 20px #ff0000, 0 0 40px #8b0000;
             animation: pulse 2s infinite alternate;
         }
 
-        /* Parlama (Pulse) animasyonu */
         @keyframes pulse {
-            0% { 
-                transform: scale(1); 
-                text-shadow: 0 0 10px #ff0000, 0 0 20px #ff0000; 
-            }
-            100% { 
-                transform: scale(1.05); 
-                text-shadow: 0 0 20px #ff0000, 0 0 40px #ff0000, 0 0 60px #ff0000; 
-            }
+            0% { transform: scale(1); text-shadow: 0 0 10px #ff0000, 0 0 20px #ff0000; }
+            100% { transform: scale(1.05); text-shadow: 0 0 20px #ff0000, 0 0 40px #ff0000, 0 0 60px #ff0000; }
         }
 
-        /* Yükleniyor noktaları */
-        .dots {
-            display: flex;
-            margin-top: 30px;
-            gap: 15px;
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* --- 2. AŞAMA: WELCOME EKRANI --- */
+        #welcome-screen {
+            display: none;
+            position: absolute;
+            text-align: center;
+            z-index: 10;
+            animation: fadeIn 1s ease-in-out;
         }
 
-        .dot {
-            width: 12px;
-            height: 12px;
-            background-color: #ff0000;
+        #welcome-screen h1 {
+            font-size: 5rem;
+            text-shadow: 0 0 20px #ff6600, 0 0 40px #ff6600;
+            letter-spacing: 5px;
+        }
+
+        /* --- 3. AŞAMA: OYUN EKRANI --- */
+        #game-container {
+            display: none;
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            height: 300px;
+            border: 3px solid #ff6600;
+            border-radius: 15px;
+            background: rgba(0, 0, 0, 0.6);
+            box-shadow: 0 0 30px rgba(255, 102, 0, 0.5);
+            overflow: hidden;
+        }
+
+        #ground {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 20px;
+            background: #ff6600;
+            box-shadow: 0 0 15px #ff6600;
+        }
+
+        /* CSS ile Çizilmiş Naruto */
+        #naruto {
+            position: absolute;
+            bottom: 20px;
+            left: 50px;
+            width: 50px;
+            height: 70px;
+            background: #ff9900;
+            border-radius: 25px 25px 10px 10px;
+            border: 2px solid #000;
+        }
+
+        #naruto::before { /* Kafa */
+            content: '';
+            position: absolute;
+            top: -30px;
+            left: 5px;
+            width: 40px;
+            height: 40px;
+            background: #ffdbac;
             border-radius: 50%;
-            animation: blink 1.4s infinite both;
-            box-shadow: 0 0 15px #ff0000;
+            border: 2px solid #000;
         }
 
-        .dot:nth-child(2) { animation-delay: 0.2s; }
-        .dot:nth-child(3) { animation-delay: 0.4s; }
-
-        @keyframes blink {
-            0%, 80%, 100% { opacity: 0.1; transform: scale(0.8); }
-            40% { opacity: 1; transform: scale(1.3); }
+        #naruto::after { /* Saç */
+            content: '';
+            position: absolute;
+            top: -45px;
+            left: 2px;
+            width: 45px;
+            height: 25px;
+            background: #ffcc00;
+            border-radius: 20px 20px 0 0;
+            border: 2px solid #000;
         }
 
-        /* Mobil uyum */
-        @media (max-width: 768px) {
-            .soon-text {
-                font-size: 4rem;
-                letter-spacing: 0.3rem;
-            }
+        .jump {
+            animation: jumpAnim 0.6s ease;
+        }
+
+        @keyframes jumpAnim {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-120px); }
+            100% { transform: translateY(0); }
+        }
+
+        /* Engeller (Shuriken) */
+        .obstacle {
+            position: absolute;
+            bottom: 20px;
+            width: 30px;
+            height: 30px;
+            background: #333;
+            border-radius: 50%;
+            border: 3px solid #666;
+            animation: moveObstacle 2s linear infinite;
+            box-shadow: 0 0 10px #666;
+            z-index: 5;
+        }
+
+        .obstacle::after {
+            content: '';
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            width: 10px;
+            height: 10px;
+            background: #1a0b2e;
+            border-radius: 50%;
+        }
+
+        @keyframes moveObstacle {
+            0% { left: 100%; }
+            100% { left: -50px; }
+        }
+
+        #score {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #ff6600;
+            text-shadow: 0 0 10px #ff6600;
+            z-index: 15;
+        }
+
+        #game-over {
+            display: none;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            background: rgba(0, 0, 0, 0.9);
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px solid #ff0000;
+            z-index: 20;
+        }
+
+        #game-over h2 { color: #ff0000; margin-bottom: 10px; }
+        #game-over button {
+            padding: 10px 20px;
+            background: #ff6600;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 1rem;
+            margin-top: 10px;
+        }
+        #game-over button:hover { background: #ff8800; }
+
+        #controls {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.8rem;
+            color: #aaa;
+            z-index: 15;
         }
     </style>
 </head>
 <body>
 
-    <!-- Hareketli Arka Plan -->
-    <div class="bg-animation"></div>
-
-    <!-- İçerik -->
-    <div class="container">
-        <h1 class="soon-text">SOON...</h1>
-        <div class="dots">
-            <div class="dot"></div>
-            <div class="dot"></div>
-            <div class="dot"></div>
-        </div>
+    <!-- 1. AŞAMA: SOON -->
+    <div id="soon-screen">
+        <h1>SOON...</h1>
     </div>
 
+    <!-- 2. AŞAMA: WELCOME -->
+    <div id="welcome-screen">
+        <h1>WELCOME</h1>
+    </div>
+
+    <!-- 3. AŞAMA: OYUN -->
+    <div id="game-container">
+        <div id="score">0</div>
+        <div id="naruto"></div>
+        <div id="ground"></div>
+        <div id="game-over">
+            <h2>Oyun Bitti!</h2>
+            <p id="final-score">Skor: 0</p>
+            <button onclick="startGame()">Tekrar Oyna</button>
+        </div>
+        <div id="controls">Zıplamak için Boşluk (Space) veya Ekrana Dokun</div>
+    </div>
+
+    <script>
+        const soonScreen = document.getElementById('soon-screen');
+        const welcomeScreen = document.getElementById('welcome-screen');
+        const gameContainer = document.getElementById('game-container');
+        const naruto = document.getElementById('naruto');
+        const gameOverScreen = document.getElementById('game-over');
+        const scoreDisplay = document.getElementById('score');
+        const finalScoreDisplay = document.getElementById('final-score');
+
+        let isJumping = false;
+        let isGameOver = false;
+        let score = 0;
+        let gameSpeed = 2000; 
+        let gameLoop;
+        let obstacleLoop;
+
+        // ZAMANLAYICI (Sırasıyla Ekranları Değiştir)
+        
+        // 1. Adım: 2 saniye sonra Soon'u kaldır, Welcome'u getir
+        setTimeout(() => {
+            soonScreen.style.display = 'none';
+            welcomeScreen.style.display = 'block';
+        }, 2000);
+
+        // 2. Adım: Welcome geldikten 2 saniye sonra onu da kaldır, oyunu başlat
+        setTimeout(() => {
+            welcomeScreen.style.display = 'none';
+            gameContainer.style.display = 'block';
+            startGame();
+        }, 4000); // Toplam 4 saniye sonra oyun başlar
+
+
+        // Zıplama Fonksiyonu
+        function jump() {
+            if (isJumping || isGameOver) return;
+            isJumping = true;
+            naruto.classList.add('jump');
+            
+            setTimeout(() => {
+                naruto.classList.remove('jump');
+                isJumping = false;
+            }, 600);
+        }
+
+        // Oyunu Başlatma
+        function startGame() {
+            if (gameLoop) clearInterval(gameLoop);
+            if (obstacleLoop) clearInterval(obstacleLoop);
+            
+            document.querySelectorAll('.obstacle').forEach(el => el.remove());
+            
+            isGameOver = false;
+            score = 0;
+            scoreDisplay.innerText = score;
+            gameSpeed = 2000;
+            gameOverScreen.style.display = 'none';
+            
+            gameLoop = setInterval(() => {
+                if (!isGameOver) {
+                    score++;
+                    scoreDisplay.innerText = score;
+                }
+            }, 100);
+
+            obstacleLoop = setInterval(() => {
+                if (!isGameOver) {
+                    createObstacle();
+                }
+            }, gameSpeed);
+        }
+
+        // Engel Oluşturma
+        function createObstacle() {
+            if (isGameOver) return;
+            const obstacle = document.createElement('div');
+            obstacle.classList.add('obstacle');
+            gameContainer.appendChild(obstacle);
+            
+            setTimeout(() => {
+                if (obstacle.parentNode) {
+                    obstacle.remove();
+                }
+            }, gameSpeed + 500);
+
+            checkCollision(obstacle);
+        }
+
+        // Çarpışma Kontrolü
+        function checkCollision(obstacle) {
+            const collisionInterval = setInterval(() => {
+                if (isGameOver || !obstacle.parentNode) {
+                    clearInterval(collisionInterval);
+                    return;
+                }
+                
+                const narutoRect = naruto.getBoundingClientRect();
+                const obstacleRect = obstacle.getBoundingClientRect();
+                const containerRect = gameContainer.getBoundingClientRect();
+
+                const narutoX = narutoRect.left - containerRect.left;
+                const obstacleX = obstacleRect.left - containerRect.left;
+                const narutoY = narutoRect.top - containerRect.top;
+
+                const buffer = 10;
+                
+                if (
+                    obstacleX < narutoX + narutoRect.width - buffer && 
+                    obstacleX + obstacleRect.width > narutoX + buffer &&
+                    narutoY > (gameContainer.clientHeight - 80)
+                ) {
+                    gameOver();
+                    clearInterval(collisionInterval);
+                }
+
+            }, 10);
+        }
+
+        // Oyun Bitti
+        function gameOver() {
+            isGameOver = true;
+            clearInterval(gameLoop);
+            clearInterval(obstacleLoop);
+            finalScoreDisplay.innerText = "Skor: " + score;
+            gameOverScreen.style.display = 'block';
+            
+            document.querySelectorAll('.obstacle').forEach(el => el.remove());
+        }
+
+        // Kontroller
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'Space') {
+                e.preventDefault();
+                jump();
+            }
+        });
+
+        gameContainer.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            jump();
+        });
+        
+        gameContainer.addEventListener('mousedown', (e) => {
+            e.preventDefault();
+            jump();
+        });
+
+    </script>
 </body>
 </html>
