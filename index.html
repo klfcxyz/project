@@ -3,368 +3,470 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ninja Runner</title>
+    <title>rafeâxyreall | Panel</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        
-        body {
-            background: #1a0b2e;
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-family: 'Courier New', Courier, monospace;
-            overflow: hidden;
-            color: white;
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
+        :root {
+            --bg: #0a0a0f;
+            --panel: #12121a;
+            --accent: #9d4edd;
+            --text: #fff;
+            --muted: #888;
+            --danger: #ff4757;
+            --success: #2ed573;
         }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background: var(--bg); color: var(--text); overflow: hidden; }
 
-        /* --- GİRİŞ EKRANI --- */
-        #intro-screen {
-            position: absolute;
-            text-align: center;
-            z-index: 50;
-            background: rgba(0,0,0,0.8);
-            padding: 40px;
-            border-radius: 10px;
-            border: 2px solid #ffcc00;
+        /* Sorumluluk Reddi */
+        #disclaimer {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(10,10,15,0.98); backdrop-filter: blur(10px);
+            display: flex; justify-content: center; align-items: center; z-index: 9999;
         }
-        
-        #intro-screen h1 {
-            font-size: 4rem;
-            color: #ffcc00;
-            text-shadow: 4px 4px 0 #000;
-            margin-bottom: 10px;
+        .disclaimer-box {
+            background: var(--panel); padding: 40px; border-radius: 20px;
+            border: 1px solid var(--accent); box-shadow: 0 0 40px rgba(157,78,221,0.3);
+            max-width: 600px; text-align: center;
         }
+        .disclaimer-box h1 { font-size: 32px; color: var(--accent); margin-bottom: 10px; }
+        .disclaimer-box p { color: var(--muted); margin-bottom: 20px; line-height: 1.6; text-align: left; }
+        .warning { color: var(--danger); font-weight: bold; }
+        .checkbox-area { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; justify-content: center; }
+        .checkbox-area input { width: 20px; height: 20px; cursor: pointer; }
+        .btn-accept {
+            background: var(--accent); color: white; border: none;
+            padding: 15px 40px; font-size: 16px; font-weight: bold;
+            border-radius: 10px; cursor: pointer; transition: 0.3s;
+        }
+        .btn-accept:disabled { background: #333; cursor: not-allowed; opacity: 0.5; }
+        .btn-accept:not(:disabled):hover { box-shadow: 0 0 30px rgba(157,78,221,0.5); }
 
-        #intro-screen p {
-            font-size: 1.2rem;
-            color: #ccc;
-            animation: blink 1s infinite;
+        /* Panel */
+        #panel { display: none; height: 100vh; display: flex; }
+        .sidebar {
+            width: 260px; background: var(--panel);
+            border-right: 1px solid rgba(255,255,255,0.05);
+            display: flex; flex-direction: column; overflow-y: auto;
         }
+        .logo {
+            padding: 20px; font-size: 20px; font-weight: 800;
+            color: var(--accent); display: flex; align-items: center; gap: 10px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            flex-shrink: 0;
+        }
+        .menu { list-style: none; padding: 10px; flex-grow: 1; }
+        .menu li {
+            padding: 10px 12px; margin-bottom: 2px; border-radius: 8px;
+            cursor: pointer; color: var(--muted); transition: 0.2s;
+            display: flex; align-items: center; gap: 10px; font-size: 14px;
+        }
+        .menu li:hover, .menu li.active {
+            background: rgba(157,78,221,0.15); color: var(--accent);
+            border-left: 3px solid var(--accent);
+        }
+        .main { flex-grow: 1; padding: 30px; overflow-y: auto; }
+        header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
 
-        @keyframes blink { 50% { opacity: 0.5; } }
-
-        /* --- OYUN ALANI --- */
-        #game-container {
-            display: none;
-            position: relative;
-            width: 100%;
-            max-width: 800px;
-            height: 350px;
-            border: 4px solid #000;
-            background: #e5989b;
-            box-shadow: 0 10px 0 #000;
-            overflow: hidden;
+        .module { display: none; background: var(--panel); padding: 25px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.05); margin-bottom: 20px; }
+        .module.active { display: block; }
+        .module h3 { margin-bottom: 15px; display: flex; align-items: center; gap: 10px; color: var(--accent); }
+        textarea, input[type="text"] {
+            width: 100%; padding: 12px; background: var(--bg); color: white;
+            border: 1px solid #333; border-radius: 8px; margin-bottom: 12px;
+            font-family: monospace; resize: none; font-size: 14px;
         }
-
-        /* Dağlar */
-        .mountains {
-            position: absolute;
-            bottom: 40px;
-            width: 100%;
-            height: 150px;
-            background: #b56576;
-            clip-path: polygon(0 100%, 15% 40%, 30% 100%, 45% 20%, 60% 100%, 75% 50%, 90% 100%, 100% 60%, 100% 100%);
-            z-index: 1;
+        textarea { height: 100px; }
+        textarea:focus, input:focus { outline: none; border-color: var(--accent); }
+        .btn-action {
+            background: var(--accent); color: white; border: none;
+            padding: 10px 20px; border-radius: 8px; cursor: pointer;
+            font-weight: bold; transition: 0.3s; font-size: 14px;
         }
-        .mountains-2 {
-            position: absolute;
-            bottom: 40px;
-            width: 100%;
-            height: 100px;
-            background: #6d597a;
-            clip-path: polygon(0 100%, 20% 30%, 40% 100%, 60% 10%, 80% 100%, 100% 40%, 100% 100%);
-            z-index: 2;
+        .btn-action:hover { box-shadow: 0 0 15px rgba(157,78,221,0.4); }
+        .result {
+            margin-top: 15px; padding: 12px; background: var(--bg);
+            border-radius: 8px; font-family: monospace; font-size: 13px;
+            display: none; max-height: 250px; overflow-y: auto;
         }
-
-        /* Zemin */
-        #ground {
-            position: absolute;
-            bottom: 0;
-            width: 100%;
-            height: 40px;
-            background: #2a9d8f;
-            border-top: 4px solid #000;
-            border-bottom: 8px solid #5c3a21;
-            z-index: 3;
-        }
-
-        /* --- SVG NINJA KARAKTERİ --- */
-        #ninja {
-            position: absolute;
-            bottom: 40px;
-            left: 50px;
-            width: 50px;
-            height: 60px;
-            z-index: 10;
-            transition: bottom 0.1s;
-        }
-
-        .jump {
-            animation: jumpAnim 0.6s ease-in-out;
-        }
-
-        @keyframes jumpAnim {
-            0% { bottom: 40px; }
-            50% { bottom: 140px; }
-            100% { bottom: 40px; }
-        }
-
-        /* --- ENGELLER --- */
-        .obstacle {
-            position: absolute;
-            width: 30px;
-            height: 30px;
-            background: #333;
-            border: 3px solid #000;
-            border-radius: 50%; /* Shuriken */
-            z-index: 5;
-            animation: moveObstacle 2s linear infinite;
-        }
-        
-        .obstacle::after {
-            content: '';
-            position: absolute;
-            top: 8px;
-            left: 8px;
-            width: 8px;
-            height: 8px;
-            background: #e5989b;
-            border-radius: 50%;
-            border: 1px solid #000;
-        }
-
-        @keyframes moveObstacle {
-            0% { left: 100%; }
-            100% { left: -50px; }
-        }
-
-        #score {
-            position: absolute;
-            top: 15px;
-            right: 20px;
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: #000;
-            background: #ffcc00;
-            padding: 5px 15px;
-            border: 3px solid #000;
-            z-index: 15;
-        }
-
-        /* Oyun Bitti */
-        #game-over {
-            display: none;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            text-align: center;
-            background: #2c1a1d;
-            padding: 30px;
-            border: 4px solid #ff0000;
-            z-index: 20;
-            box-shadow: 5px 5px 0 #000;
-        }
-
-        #game-over h2 { color: #ff0000; margin-bottom: 15px; font-size: 2rem; }
-        #game-over button {
-            padding: 10px 20px;
-            background: #ffcc00;
-            border: 3px solid #000;
-            color: #000;
-            font-weight: bold;
-            cursor: pointer;
-            font-size: 1rem;
-            margin-top: 15px;
-            box-shadow: 2px 2px 0 #000;
-        }
-
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg); }
+        ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 3px; }
     </style>
 </head>
 <body>
 
-    <!-- GİRİŞ EKRANI -->
-    <div id="intro-screen">
-        <h1>WELCOME</h1>
-        <p>Başlamak için tıkla veya Boşluk'a bas</p>
+    <!-- SORUMLULUK REDDİ -->
+    <div id="disclaimer">
+        <div class="disclaimer-box">
+            <h1><i class="fa-solid fa-shield-halved"></i> rafeâxyreall</h1>
+            <p class="warning">⚠️ SORUMLULUK REDDİ BEYANI</p>
+            <p>Bu panel <b>rafeâxyreall</b> tarafından geliştirilmiştir. Sitede bulunan tüm araçlar eğitim ve test amaçlıdır. Discord Kullanım Şartları'nı ihlal etmek hesabınızın kapatılmasına neden olabilir. Tüm sorumluluk kullanıcıya aittir.</p>
+            <div class="checkbox-area">
+                <input type="checkbox" id="kabul">
+                <label for="kabul">Okudum, anladım ve kabul ediyorum.</label>
+            </div>
+            <button class="btn-accept" id="btnGiris" disabled>Panele Giriş Yap</button>
+        </div>
     </div>
 
-    <!-- OYUN EKRANI -->
-    <div id="game-container">
-        <div class="mountains"></div>
-        <div class="mountains-2"></div>
-        <div id="ground"></div>
-        
-        <div id="score">0</div>
-        
-        <!-- SVG İLE ÇİZİLMİŞ NİNJA -->
-        <div id="ninja">
-            <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-                <!-- Kafa -->
-                <circle cx="50" cy="40" r="20" fill="#ffdbac" stroke="#000" stroke-width="4"/>
-                <!-- Saç/Bandana -->
-                <path d="M30 30 Q50 10 70 30 L75 35 L25 35 Z" fill="#ff8c00" stroke="#000" stroke-width="3"/>
-                <!-- Göz Bandı -->
-                <rect x="30" y="35" width="40" height="10" fill="#333" />
-                <!-- Gözler (Sadece biri açık) -->
-                <circle cx="40" cy="42" r="3" fill="#fff" />
-                <circle cx="60" cy="42" r="3" fill="#000" />
-                <!-- Vücut (Turuncu) -->
-                <rect x="30" y="60" width="40" height="30" fill="#ff8c00" stroke="#000" stroke-width="4" rx="5"/>
-                <!-- Bacaklar -->
-                <rect x="35" y="85" width="10" height="15" fill="#000" />
-                <rect x="55" y="85" width="10" height="15" fill="#000" />
-            </svg>
+    <!-- PANEL -->
+    <div id="panel">
+        <div class="sidebar">
+            <div class="logo"><i class="fa-solid fa-microchip"></i> rafeâxyreall</div>
+            <ul class="menu">
+                <li class="active" onclick="showModule('dashboard', this)"><i class="fa-solid fa-gauge"></i> Dashboard</li>
+                <li onclick="showModule('token', this)"><i class="fa-solid fa-key"></i> Token Checker</li>
+                <li onclick="showModule('owo', this)"><i class="fa-solid fa-ghost"></i> OwO Farm</li>
+                <li onclick="showModule('aktifbot', this)"><i class="fa-solid fa-robot"></i> Aktif Bot</li>
+                <li onclick="showModule('hesap', this)"><i class="fa-solid fa-user"></i> Online Hesap</li>
+                <li onclick="showModule('webhook', this)"><i class="fa-solid fa-bolt"></i> Webhook Spam</li>
+                <li onclick="showModule('sesbot', this)"><i class="fa-solid fa-headphones"></i> Ses Botu</li>
+                <li onclick="showModule('hypesquad', this)"><i class="fa-solid fa-crown"></i> HypeSquad</li>
+                <li onclick="showModule('apigen', this)"><i class="fa-solid fa-code"></i> API Gen</li>
+                <li onclick="showModule('nick', this)"><i class="fa-solid fa-search"></i> Nick Checker</li>
+                <li onclick="showModule('jailbreak', this)"><i class="fa-solid fa-robot"></i> Jailbreak</li>
+                <li onclick="showModule('altyapi', this)"><i class="fa-solid fa-box"></i> Altyapı</li>
+                <li onclick="showModule('inat', this)"><i class="fa-solid fa-comment"></i> İnat Tool</li>
+                <li onclick="showModule('qr', this)"><i class="fa-solid fa-qrcode"></i> QR Kod</li>
+            </ul>
         </div>
-        
-        <div id="game-over">
-            <h2>Oyun Bitti!</h2>
-            <p id="final-score">Skor: 0</p>
-            <button onclick="startGame()">Tekrar Oyna</button>
+        <div class="main">
+            <header>
+                <h2>Hoş Geldin, <span style="color: var(--accent);">rafeâxyreall</span></h2>
+            </header>
+
+            <!-- DASHBOARD -->
+            <div id="dashboard" class="module active">
+                <h3><i class="fa-solid fa-gauge"></i> Dashboard</h3>
+                <p style="color: var(--muted);">Sisteme hoş geldin. Sol menüden istediğin modülü seç.</p>
+            </div>
+
+            <!-- TOKEN CHECKER -->
+            <div id="token" class="module">
+                <h3><i class="fa-solid fa-key"></i> Token Checker</h3>
+                <textarea id="tokenInput" placeholder="Token1&#10;Token2&#10;Token3..."></textarea>
+                <button class="btn-action" onclick="checkTokens()">Kontrol Et</button>
+                <div class="result" id="tokenResult"></div>
+            </div>
+
+            <!-- OWO FARM -->
+            <div id="owo" class="module">
+                <h3><i class="fa-solid fa-ghost"></i> OwO Farm</h3>
+                <input type="text" id="owoToken" placeholder="Hesap Token">
+                <input type="text" id="owoKanal" placeholder="Farm Kanal ID">
+                <button class="btn-action" onclick="owoStart()">Farm Başlat</button>
+                <div class="result" id="owoResult"></div>
+            </div>
+
+            <!-- AKTIF BOT -->
+            <div id="aktifbot" class="module">
+                <h3><i class="fa-solid fa-robot"></i> Aktif Bot Tutucu</h3>
+                <input type="text" id="aktifbotToken" placeholder="Bot Token">
+                <button class="btn-action" onclick="aktifBotStart()">Botu Aktif Et</button>
+                <div class="result" id="aktifbotResult"></div>
+            </div>
+
+            <!-- ONLINE HESAP -->
+            <div id="hesap" class="module">
+                <h3><i class="fa-solid fa-user"></i> Online Hesap</h3>
+                <input type="text" id="hesapToken" placeholder="Hesap Token">
+                <button class="btn-action" onclick="hesapStart()">Hesabı Online Yap</button>
+                <div class="result" id="hesapResult"></div>
+            </div>
+
+            <!-- WEBHOOK SPAM -->
+            <div id="webhook" class="module">
+                <h3><i class="fa-solid fa-bolt"></i> Webhook Spammer</h3>
+                <input type="text" id="webhookUrl" placeholder="Webhook URL">
+                <textarea id="webhookMesaj" placeholder="Spamlanacak mesaj..."></textarea>
+                <button class="btn-action" onclick="webhookStart()">Spam Başlat</button>
+                <div class="result" id="webhookResult"></div>
+            </div>
+
+            <!-- SES BOTU -->
+            <div id="sesbot" class="module">
+                <h3><i class="fa-solid fa-headphones"></i> Ses Botu</h3>
+                <input type="text" id="sesbotToken" placeholder="Bot Token">
+                <input type="text" id="sesbotKanal" placeholder="Ses Kanal ID">
+                <button class="btn-action" onclick="sesBotStart()">Sese Bağla</button>
+                <div class="result" id="sesbotResult"></div>
+            </div>
+
+            <!-- HYPESQUAD -->
+            <div id="hypesquad" class="module">
+                <h3><i class="fa-solid fa-crown"></i> HypeSquad</h3>
+                <input type="text" id="hsToken" placeholder="Hesap Token">
+                <select id="hsHouse" style="width:100%;padding:12px;background:var(--bg);color:white;border:1px solid #333;border-radius:8px;margin-bottom:12px;">
+                    <option value="1">Bravery</option>
+                    <option value="2">Brilliance</option>
+                    <option value="3">Balance</option>
+                </select>
+                <button class="btn-action" onclick="hypesquadStart()">Rozet Ver</button>
+                <div class="result" id="hsResult"></div>
+            </div>
+
+            <!-- API GEN -->
+            <div id="apigen" class="module">
+                <h3><i class="fa-solid fa-code"></i> API Gen</h3>
+                <input type="text" id="apiSorgu" placeholder="Ne arıyorsun? (örn: hava, bitcoin, anime...)">
+                <button class="btn-action" onclick="apiAra()">Ara</button>
+                <div class="result" id="apiResult"></div>
+            </div>
+
+            <!-- NICK CHECKER -->
+            <div id="nick" class="module">
+                <h3><i class="fa-solid fa-search"></i> Nick Checker</h3>
+                <input type="text" id="nickHane" placeholder="Kaç haneli? (örn: 6)">
+                <button class="btn-action" onclick="nickAra()">Nick Ara</button>
+                <div class="result" id="nickResult"></div>
+            </div>
+
+            <!-- JAILBREAK -->
+            <div id="jailbreak" class="module">
+                <h3><i class="fa-solid fa-robot"></i> Jailbreak</h3>
+                <button class="btn-action" onclick="jailbreakAl()">Rastgele Jailbreak Al</button>
+                <div class="result" id="jbResult"></div>
+            </div>
+
+            <!-- ALTYAPI -->
+            <div id="altyapi" class="module">
+                <h3><i class="fa-solid fa-box"></i> Altyapı</h3>
+                <input type="text" id="altyapiSorgu" placeholder="Ne tür bot? (örn: müzik, guard, ticket...)">
+                <button class="btn-action" onclick="altyapiAra()">Ara</button>
+                <div class="result" id="altyapiResult"></div>
+            </div>
+
+            <!-- İNAT TOOL -->
+            <div id="inat" class="module">
+                <h3><i class="fa-solid fa-comment"></i> İnat Tool</h3>
+                <input type="text" id="inatToken" placeholder="Hesap Token">
+                <input type="text" id="inatKanal" placeholder="Kanal ID">
+                <input type="text" id="inatMesaj" placeholder="Atılacak mesaj" value="rafeâxyreall">
+                <button class="btn-action" onclick="inatStart()">Başlat</button>
+                <div class="result" id="inatResult"></div>
+            </div>
+
+            <!-- QR KOD -->
+            <div id="qr" class="module">
+                <h3><i class="fa-solid fa-qrcode"></i> QR Kod</h3>
+                <input type="text" id="qrIcerik" placeholder="Metin veya link">
+                <button class="btn-action" onclick="qrOlustur()">Oluştur</button>
+                <div class="result" id="qrResult"></div>
+            </div>
         </div>
     </div>
 
     <script>
-        const introScreen = document.getElementById('intro-screen');
-        const gameContainer = document.getElementById('game-container');
-        const ninja = document.getElementById('ninja');
-        const gameOverScreen = document.getElementById('game-over');
-        const scoreDisplay = document.getElementById('score');
-        const finalScoreDisplay = document.getElementById('final-score');
+        // Sorumluluk Reddi
+        const kabul = document.getElementById('kabul');
+        const btnGiris = document.getElementById('btnGiris');
+        kabul.addEventListener('change', () => btnGiris.disabled = !kabul.checked);
+        btnGiris.addEventListener('click', () => {
+            document.getElementById('disclaimer').style.display = 'none';
+            document.getElementById('panel').style.display = 'flex';
+        });
 
-        let isJumping = false;
-        let isGameOver = false;
-        let score = 0;
-        let gameInterval;
-        let obstacleInterval;
-        let currentObstacle = null;
-        let obstacleSpeed = 2000;
-        let gameStarted = false;
-
-        // Başlatma Dinleyicileri
-        function initGame() {
-            if (gameStarted) return;
-            gameStarted = true;
-            introScreen.style.display = 'none';
-            gameContainer.style.display = 'block';
-            startGame();
+        // Modül Geçişi
+        function showModule(id, element) {
+            document.querySelectorAll('.module').forEach(m => m.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            document.querySelectorAll('.menu li').forEach(l => l.classList.remove('active'));
+            element.classList.add('active');
         }
 
-        document.addEventListener('keydown', (e) => {
-            if (e.code === 'Space' || e.code === 'ArrowUp') {
-                e.preventDefault();
-                if (!gameStarted) initGame();
-                else jump();
+        const PROXY = 'https://corsproxy.io/?';
+
+        // Token Checker
+        async function checkTokens() {
+            const input = document.getElementById('tokenInput').value;
+            const resultBox = document.getElementById('tokenResult');
+            if (!input) return alert('Token gir!');
+            resultBox.style.display = 'block';
+            resultBox.innerHTML = 'Kontrol ediliyor...';
+            const tokens = input.split('\n').filter(t => t.trim() !== '');
+            let html = `<strong>Toplam:</strong> ${tokens.length} token<br><hr style="border-color:#333;margin:10px 0;">`;
+            for (const token of tokens) {
+                try {
+                    const res = await fetch(PROXY + 'https://discord.com/api/v9/users/@me', {
+                        headers: { 'Authorization': token.trim() }
+                    });
+                    if (res.status === 200) {
+                        const data = await res.json();
+                        html += `<p style="color:var(--success)">✅ Geçerli: ${data.username} (ID: ${data.id})</p>`;
+                    } else {
+                        html += `<p style="color:var(--danger)">❌ Geçersiz Token</p>`;
+                    }
+                } catch (e) {
+                    html += `<p style="color:var(--danger)">❌ Bağlantı Hatası</p>`;
+                }
             }
-        });
-
-        gameContainer.addEventListener('touchstart', (e) => {
-            e.preventDefault();
-            if (!gameStarted) initGame();
-            else jump();
-        });
-        
-        gameContainer.addEventListener('mousedown', (e) => {
-            e.preventDefault();
-            if (!gameStarted) initGame();
-            else jump();
-        });
-
-        function jump() {
-            if (isJumping || isGameOver) return;
-            isJumping = true;
-            ninja.classList.add('jump');
-            
-            setTimeout(() => {
-                ninja.classList.remove('jump');
-                isJumping = false;
-            }, 600); 
+            resultBox.innerHTML = html;
         }
 
-        function startGame() {
-            if (!gameStarted) return;
-            clearInterval(gameInterval);
-            clearInterval(obstacleInterval);
-            if (currentObstacle) currentObstacle.remove();
-            
-            isGameOver = false;
-            score = 0;
-            scoreDisplay.innerText = score;
-            gameOverScreen.style.display = 'none';
-            obstacleSpeed = 2000;
-
-            gameInterval = setInterval(() => {
-                if (!isGameOver) {
-                    score += 10;
-                    scoreDisplay.innerText = score;
-                }
-            }, 100);
-
-            spawnObstacle(); 
-            obstacleInterval = setInterval(() => {
-                if (!isGameOver) {
-                    spawnObstacle();
-                    if (obstacleSpeed > 800) obstacleSpeed -= 50; 
-                }
-            }, 1500);
+        // OwO Farm
+        async function owoStart() {
+            const token = document.getElementById('owoToken').value.trim();
+            const kanal = document.getElementById('owoKanal').value.trim();
+            const resultBox = document.getElementById('owoResult');
+            if (!token || !kanal) return alert('Token ve Kanal ID gir!');
+            resultBox.style.display = 'block';
+            resultBox.innerHTML = 'Farm başlatılıyor...';
+            setInterval(async () => {
+                try {
+                    await fetch(PROXY + `https://discord.com/api/v9/channels/${kanal}/messages`, {
+                        method: 'POST',
+                        headers: { 'Authorization': token, 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ content: 'owo hunt' })
+                    });
+                } catch (e) {}
+            }, 20000);
+            resultBox.innerHTML = `<p style="color:var(--success)">✅ Farm başlatıldı!</p>`;
         }
 
-        function spawnObstacle() {
-            if (isGameOver) return;
-            if (currentObstacle) return; 
+        // Aktif Bot (sadece görsel simülasyon)
+        function aktifBotStart() {
+            const token = document.getElementById('aktifbotToken').value.trim();
+            const resultBox = document.getElementById('aktifbotResult');
+            if (!token) return alert('Bot token gir!');
+            resultBox.style.display = 'block';
+            resultBox.innerHTML = `<p style="color:var(--success)">✅ Bot aktif tutuluyor! (Simülasyon - gerçek bot arka planda çalışmaz)</p>`;
+        }
 
-            const obs = document.createElement('div');
-            obs.classList.add('obstacle');
-            
-            const isFlying = Math.random() > 0.5;
-            if (isFlying) {
-                obs.style.bottom = '120px'; 
+        // Online Hesap (simülasyon)
+        function hesapStart() {
+            const token = document.getElementById('hesapToken').value.trim();
+            const resultBox = document.getElementById('hesapResult');
+            if (!token) return alert('Token gir!');
+            resultBox.style.display = 'block';
+            resultBox.innerHTML = `<p style="color:var(--success)">✅ Hesap online tutuluyor! (Simülasyon)</p>`;
+        }
+
+        // Webhook Spam
+        let webhookInterval;
+        function webhookStart() {
+            const url = document.getElementById('webhookUrl').value.trim();
+            const mesaj = document.getElementById('webhookMesaj').value.trim();
+            const resultBox = document.getElementById('webhookResult');
+            if (!url || !mesaj) return alert('Webhook URL ve mesaj gir!');
+            if (webhookInterval) clearInterval(webhookInterval);
+            resultBox.style.display = 'block';
+            webhookInterval = setInterval(async () => {
+                try {
+                    await fetch(url, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ content: mesaj })
+                    });
+                    resultBox.innerHTML = `<p style="color:var(--success)">✅ Mesaj gönderildi!</p>`;
+                } catch (e) {
+                    resultBox.innerHTML = `<p style="color:var(--danger)">❌ Hata: ${e.message}</p>`;
+                }
+            }, 2000);
+        }
+
+        // Ses Botu (simülasyon)
+        function sesBotStart() {
+            const token = document.getElementById('sesbotToken').value.trim();
+            const kanal = document.getElementById('sesbotKanal').value.trim();
+            const resultBox = document.getElementById('sesbotResult');
+            if (!token || !kanal) return alert('Token ve kanal ID gir!');
+            resultBox.style.display = 'block';
+            resultBox.innerHTML = `<p style="color:var(--success)">✅ Bot sese bağlandı! (Simülasyon)</p>`;
+        }
+
+        // HypeSquad (gerçek istek)
+        async function hypesquadStart() {
+            const token = document.getElementById('hsToken').value.trim();
+            const house = document.getElementById('hsHouse').value;
+            const resultBox = document.getElementById('hsResult');
+            if (!token) return alert('Token gir!');
+            resultBox.style.display = 'block';
+            try {
+                const res = await fetch(PROXY + 'https://discord.com/api/v9/hypesquad/online', {
+                    method: 'POST',
+                    headers: { 'Authorization': token, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ house_id: parseInt(house) })
+                });
+                if (res.status === 204) resultBox.innerHTML = `<p style="color:var(--success)">✅ Rozet verildi!</p>`;
+                else resultBox.innerHTML = `<p style="color:var(--danger)">❌ Hata (Kod: ${res.status})</p>`;
+            } catch (e) {
+                resultBox.innerHTML = `<p style="color:var(--danger)">❌ Bağlantı hatası</p>`;
+            }
+        }
+
+        // API Gen (sadece liste gösterimi)
+        const API_LISTESI = [
+            { ad: 'CoinGecko', aciklama: 'Kripto para fiyatları' },
+            { ad: 'Open-Meteo', aciklama: 'Hava durumu' },
+            { ad: 'Jikan', aciklama: 'Anime verileri' },
+            { ad: 'REST Countries', aciklama: 'Ülke bilgileri' },
+            { ad: 'JSONPlaceholder', aciklama: 'Test verileri' },
+        ];
+        function apiAra() {
+            const sorgu = document.getElementById('apiSorgu').value.toLowerCase();
+            const resultBox = document.getElementById('apiResult');
+            const bulunanlar = API_LISTESI.filter(a => a.ad.toLowerCase().includes(sorgu) || a.aciklama.toLowerCase().includes(sorgu));
+            resultBox.style.display = 'block';
+            if (bulunanlar.length === 0) {
+                resultBox.innerHTML = '<p>Sonuç bulunamadı.</p>';
             } else {
-                obs.style.bottom = '40px'; 
+                resultBox.innerHTML = bulunanlar.map(a => `<p>• <b>${a.ad}</b>: ${a.aciklama}</p>`).join('');
             }
-
-            obs.style.animationDuration = `${obstacleSpeed}ms`;
-            gameContainer.appendChild(obs);
-            currentObstacle = obs;
-
-            setTimeout(() => {
-                if (obs.parentNode) obs.remove();
-                if (currentObstacle === obs) currentObstacle = null;
-            }, obstacleSpeed);
         }
 
-        setInterval(() => {
-            if (isGameOver || !currentObstacle) return;
+        // Nick Checker (simülasyon)
+        function nickAra() {
+            const hane = document.getElementById('nickHane').value;
+            const resultBox = document.getElementById('nickResult');
+            if (!hane || hane < 4) return alert('En az 4 haneli olmalı!');
+            resultBox.style.display = 'block';
+            resultBox.innerHTML = `<p style="color:var(--success)">✅ ${hane} haneli boş nick bulundu: <b>ar_t${Math.floor(Math.random()*999)}</b> (Simülasyon)</p>`;
+        }
 
-            const nRect = ninja.getBoundingClientRect();
-            const oRect = currentObstacle.getBoundingClientRect();
-            const cRect = gameContainer.getBoundingClientRect();
+        // Jailbreak
+        const JAILBREAKLER = ['DAN Mode', 'Developer Mode', 'Roleplay Bypass', 'Grandma Exploit', 'Fictional Story'];
+        function jailbreakAl() {
+            const resultBox = document.getElementById('jbResult');
+            resultBox.style.display = 'block';
+            const secili = JAILBREAKLER[Math.floor(Math.random() * JAILBREAKLER.length)];
+            resultBox.innerHTML = `<p style="color:var(--success)">✅ Jailbreak: <b>${secili}</b> (İçerik için DM)</p>`;
+        }
 
-            const nX = nRect.left - cRect.left;
-            const oX = oRect.left - cRect.left;
-            const nY = nRect.top - cRect.top;
-            const groundY = cRect.height - 40 - 60;
-
-            if (oX < nX + 50 && oX + 30 > nX + 10) {
-                const obsBottom = currentObstacle.style.bottom;
-                
-                if (obsBottom === '40px' && nY > groundY - 20) {
-                    gameOver(); 
-                } else if (obsBottom === '120px' && nY < groundY - 30 && nY > groundY - 130) {
-                    gameOver(); 
-                }
+        // Altyapı
+        const ALTYAPI_LISTESI = ['Moderasyon Botu', 'Müzik Botu', 'Ticket Sistemi', 'Ekonomi Botu', 'Welcome Botu'];
+        function altyapiAra() {
+            const sorgu = document.getElementById('altyapiSorgu').value.toLowerCase();
+            const resultBox = document.getElementById('altyapiResult');
+            const bulunanlar = ALTYAPI_LISTESI.filter(a => a.toLowerCase().includes(sorgu));
+            resultBox.style.display = 'block';
+            if (bulunanlar.length === 0) {
+                resultBox.innerHTML = '<p>Sonuç bulunamadı.</p>';
+            } else {
+                resultBox.innerHTML = bulunanlar.map(a => `<p>• ${a}</p>`).join('');
             }
-        }, 10);
+        }
 
-        function gameOver() {
-            isGameOver = true;
-            clearInterval(gameInterval);
-            clearInterval(obstacleInterval);
-            finalScoreDisplay.innerText = "Skor: " + score;
-            gameOverScreen.style.display = 'block';
-            if (currentObstacle) currentObstacle.remove();
+        // İnat Tool (simülasyon)
+        function inatStart() {
+            const token = document.getElementById('inatToken').value.trim();
+            const kanal = document.getElementById('inatKanal').value.trim();
+            const mesaj = document.getElementById('inatMesaj').value.trim();
+            const resultBox = document.getElementById('inatResult');
+            if (!token || !kanal) return alert('Token ve kanal ID gir!');
+            resultBox.style.display = 'block';
+            resultBox.innerHTML = `<p style="color:var(--success)">✅ İnat başlatıldı! (Simülasyon)</p>`;
+        }
+
+        // QR Kod (gerçek)
+        function qrOlustur() {
+            const icerik = document.getElementById('qrIcerik').value.trim();
+            const resultBox = document.getElementById('qrResult');
+            if (!icerik) return alert('İçerik gir!');
+            resultBox.style.display = 'block';
+            resultBox.innerHTML = `<img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(icerik)}" alt="QR">`;
         }
     </script>
 </body>
-</html>
+                                                                                            </html>
